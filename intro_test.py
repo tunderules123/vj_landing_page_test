@@ -1,116 +1,67 @@
 import streamlit as st
 
-# Initialize session state to control the pre-landing page
-if "show_intro" not in st.session_state:
-    st.session_state["show_intro"] = True  # Show intro page on first load
+# Custom CSS
+st.markdown("""
+    <style>
+        @keyframes neonBackground {
+            0% { background: radial-gradient(circle at 30% 30%, #ff00ff, #000000); }
+            50% { background: radial-gradient(circle at 70% 70%, #ff33cc, #000000); }
+            100% { background: radial-gradient(circle at 30% 30%, #ff00ff, #000000); }
+        }
 
-# If user has not pressed Enter, show the intro page
-if st.session_state["show_intro"]:
-    st.markdown(
-        """
-        <style>
-        /* Center everything */
-        .full-page {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #1E1E1E;  /* Dark background */
+        body {
+            animation: neonBackground 5s infinite alternate;
+            background-size: cover;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-family: 'Inter', sans-serif;
             text-align: center;
-            z-index: 9999;
+            color: white;
+            font-family: 'Arial', sans-serif;
         }
 
-        /* Style for VJ Lens text */
-        .title {
-            font-size: 48px;
+        h1 {
+            font-size: 50px;
             font-weight: bold;
-            margin-bottom: 20px;
         }
 
-        /* Magnifying glass container */
-        .magnifying-glass {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            border: 6px solid white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
+        svg {
+            width: 150px;
+            height: 150px;
         }
 
-        /* Handle of the magnifying glass */
-        .magnifying-glass::after {
-            content: "";
-            position: absolute;
-            bottom: -25px;
-            right: -25px;
-            width: 40px;
-            height: 8px;
-            background-color: white;
-            transform: rotate(45deg);
+        @keyframes moveEye {
+            0%, 100% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
         }
 
-        /* Eye inside magnifying glass */
-        .eye {
-            width: 30px;
-            height: 20px;
-            background-color: white;
-            border-radius: 50%;
-            position: absolute;
-            animation: move-eye 2s infinite alternate;
+        #eye {
+            animation: moveEye 2s infinite alternate;
         }
+    </style>
+""", unsafe_allow_html=True)
 
-        /* Eye animation - looks left & right */
-        @keyframes move-eye {
-            0% { transform: translateX(-10px); }
-            100% { transform: translateX(10px); }
-        }
+# Main UI
+st.markdown("<h1>Vocal Justice Lens</h1>", unsafe_allow_html=True)
 
-        /* Explanation text */
-        .explanation {
-            font-size: 18px;
-            width: 60%;
-            margin-bottom: 20px;
-        }
+# SVG Animation
+st.markdown("""
+    <svg width="200" height="200" viewBox="0 0 200 200">
+        <circle cx="90" cy="90" r="60" stroke="white" stroke-width="5" fill="none" />
+        <line x1="140" y1="140" x2="180" y2="180" stroke="white" stroke-width="5" />
+        <circle cx="90" cy="90" r="30" fill="white" />
+        <circle id="eye" cx="90" cy="90" r="10" fill="black" />
+    </svg>
+""", unsafe_allow_html=True)
 
-        /* Prompt text */
-        .prompt {
-            font-size: 16px;
-            color: #FAC898;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        </style>
+# Description
+st.markdown("<p>VJ Lens helps educators analyze survey data using AI, providing deep insights into teacher confidence, advocacy, and more.</p>", unsafe_allow_html=True)
 
-        <div class="full-page">
-            <div class="title">VJ Lens</div>
-            <div class="magnifying-glass">
-                <div class="eye"></div>
-            </div>
-            <div class="explanation">
-                VJ Lens helps educators analyze survey data using AI, providing deep insights into teacher confidence, advocacy, and more.
-            </div>
-            <div class="prompt">Press "Enter" to continue...</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+# Press Enter Prompt
+st.markdown("<p><b>Press 'Enter' to continue...</b></p>", unsafe_allow_html=True)
 
-    # Capture "Enter" key press
-    user_input = st.text_input("", key="enter_prompt")
-
-    if user_input == "":
-        st.session_state["show_intro"] = False  # Hide the intro page
-        st.experimental_rerun()
-
-else:
-    st.write("✅ Intro complete! This is where the real app will load.")
+# Wait for Enter Key
+if st.button("Enter"):
+    st.switch_page("main_app.py")
