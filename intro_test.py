@@ -1,205 +1,89 @@
 import streamlit as st
 import time
 
-# Set page config
+###############################################
+# 0. PAGE CONFIG
+###############################################
 st.set_page_config(page_title="Vocal Justice Lens", layout="wide")
 
-# Session state for tracking if user has entered
+###############################################
+# 1. SESSION STATE FOR LANDING PAGE
+###############################################
 if "entered" not in st.session_state:
-    st.session_state.entered = False
+    st.session_state["entered"] = False
 
-# If user has NOT entered, show the intro screen
-if not st.session_state.entered:
+###############################################
+# 2. LANDING PAGE
+###############################################
+def show_landing_page():
+    """
+    Displays a white-background landing page with:
+    - Large "Vocal Justice Lens" title (60% width)
+    - Embedded MP4 animation
+    - Explanation text
+    - Prompt to press Enter
+    """
     st.markdown(
         """
         <style>
-        /* Full-screen background with neon effect */
+        /* Make entire background white */
         body {
-            background: radial-gradient(circle at top left, #ff00ff, #5500ff, black);
-            height: 100vh;
+            background-color: #FFFFFF !important;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Full-screen container */
+        .landing-container {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            color: white;
-            font-family: Arial, sans-serif;
+            justify-content: center;
+            min-height: 100vh; /* full viewport height */
+        }
+
+        /* Title styling - super large, bold, ~60% width */
+        .landing-title {
+            font-size: 10vw; /* scale with viewport width for dramatic effect */
+            font-weight: bold;
+            color: #000000; /* black text */
             text-align: center;
+            max-width: 60%;
+            margin: 0 auto;
         }
 
-        /* Title Styling */
-        h1 {
-            font-size: 50px;
-            font-weight: bold;
-            margin-bottom: 10px;
+        /* Video container: center the video */
+        .video-container {
+            margin: 30px 0;
         }
 
-        /* Description Text */
-        p {
-            font-size: 18px;
-            max-width: 600px;
-            margin: auto;
-        }
-
-        /* Press Enter Text */
-        .enter-text {
-            margin-top: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            color: #FFA500;
-        }
-
-        /* Magnifying Glass Animation */
-        .magnifying-glass {
-            position: relative;
-            width: 80px;
-            height: 80px;
+        /* Explanation text styling */
+        .explanation {
+            font-size: 1.2rem;
+            color: #333333;
+            max-width: 60%;
+            text-align: center;
             margin: 20px auto;
         }
 
-        .glass {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 4px solid white;
-            position: absolute;
+        /* Enter prompt styling */
+        .enter-prompt {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: #FFA500;
+            font-weight: bold;
         }
-
-        .handle {
-            width: 8px;
-            height: 30px;
-            background: white;
-            position: absolute;
-            bottom: -20px;
-            left: 36px;
-            transform: rotate(45deg);
-        }
-
-        /* Eye Animation */
-        .eye {
-            position: absolute;
-            top: 25%;
-            left: 25%;
-            width: 50%;
-            height: 50%;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            animation: blink 3s infinite ease-in-out;
-        }
-
-        .pupil {
-            width: 20px;
-            height: 20px;
-            background: black;
-            border-radius: 50%;
-            animation: movePupil 3s infinite ease-in-out;
-        }
-
-        /* Keyframe Animations */
-        @keyframes movePupil {
-            0%, 100% { transform: translateX(0px); }
-            40% { transform: translateX(-10px); }
-            80% { transform: translateX(10px); }
-        }
-
-        @keyframes blink {
-            0%, 100% { height: 50%; }
-            10% { height: 10%; }
-        }
-
         </style>
-
-        <h1>Vocal Justice Lens</h1>
-        <div class="magnifying-glass">
-            <div class="glass"></div>
-            <div class="handle"></div>
-            <div class="eye">
-                <div class="pupil"></div>
-            </div>
-        </div>
-        <p>VJ Lens helps educators analyze survey data using AI, providing deep insights into teacher confidence, advocacy, and more.</p>
-        <p class="enter-text">Press "Enter" to continue...</p>
         """,
         unsafe_allow_html=True
     )
 
-    # Wait for user to press enter
-    enter_key = st.text_input("Press Enter to continue...", key="enter")
-    if enter_key:
-        st.session_state.entered = True
-        st.experimental_rerun()
-
-# If user has entered, show main app
-else:
-    st.title("Vocal Justice Survey AI Analysis Tool")
-
-    st.sidebar.header("Upload Your Data")
-    pre_file = st.sidebar.file_uploader("Pre-Survey CSV (Onboarding)", type=["csv"])
-    post_file = st.sidebar.file_uploader("Post-Survey CSV (Post-Program)", type=["csv"])
-
-    if not pre_file or not post_file:
-        st.warning("Please upload both Pre and Post CSV files.")
-        st.stop()
-
-    import pandas as pd
-    import numpy as np
-    import matplotlib.pyplot as plt
-    import seaborn as sns
-
-    # Simulated loading for a smooth transition
-    with st.spinner("Loading data..."):
-        time.sleep(3)
-
-    # Read CSVs
-    onboarding_df = pd.read_csv(pre_file)
-    post_program_df = pd.read_csv(post_file)
-
-    st.write("## Data Preview")
-    col_a, col_b = st.columns(2)
-    with col_a:
-        st.write("**Pre-Survey (Onboarding) - First 5 Rows**")
-        st.dataframe(onboarding_df.head())
-    with col_b:
-        st.write("**Post-Survey (Post) - First 5 Rows**")
-        st.dataframe(post_program_df.head())
-
-    # Define Composite Scores
-    confidence_cols = [
-        "I know how to help my students communicate persuasively about social justice issues.",
-        "I know how to help my students feel confident.",
-        "I know how to help my students build their critical consciousness."
-    ]
-    advocacy_cols = [
-        "I frequently talk with my students about social justice issues.",
-        "I push my school leadership to integrate social justice education into our core curriculum."
-    ]
-
-    for col in confidence_cols + advocacy_cols:
-        onboarding_df[col] = pd.to_numeric(onboarding_df[col], errors='coerce')
-        post_program_df[col] = pd.to_numeric(post_program_df[col], errors='coerce')
-
-    # Create composite scores
-    onboarding_df["Confidence_Composite"] = onboarding_df[confidence_cols].mean(axis=1, skipna=True)
-    onboarding_df["Advocacy_Composite"] = onboarding_df[advocacy_cols].mean(axis=1, skipna=True)
-    post_program_df["Confidence_Composite"] = post_program_df[confidence_cols].mean(axis=1, skipna=True)
-    post_program_df["Advocacy_Composite"] = post_program_df[advocacy_cols].mean(axis=1, skipna=True)
-
-    pre_conf_mean = onboarding_df["Confidence_Composite"].mean()
-    post_conf_mean = post_program_df["Confidence_Composite"].mean()
-    pre_adv_mean = onboarding_df["Advocacy_Composite"].mean()
-    post_adv_mean = post_program_df["Advocacy_Composite"].mean()
-
-    # Simulated loading of graphs
-    with st.spinner("Generating graphs..."):
-        time.sleep(3)
-
-    fig, ax = plt.subplots(1, 2, figsize=(8, 4))
-    ax[0].bar(["Pre", "Post"], [pre_conf_mean, post_conf_mean], color=["blue", "orange"])
-    ax[0].set_title("Confidence Scores")
-    ax[1].bar(["Pre", "Post"], [pre_adv_mean, post_adv_mean], color=["blue", "orange"])
-    ax[1].set_title("Advocacy Scores")
-    
-    st.pyplot(fig)
-
-    st.success("Analysis Complete!")
+    # Build the landing page layout
+    st.markdown(
+        """
+        <div class="landing-container">
+            <div class="landing-title">Vocal Justice Lens</div>
+            <div class="video-container">
+                <!-- Replace 'YOUR_VIDEO_URL.mp4' with the actual link to your MP4 animation -->
+                <video width="400" autoplay loop muted playsinline>
+                    <source src="YOU
