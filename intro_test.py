@@ -1,65 +1,86 @@
 import streamlit as st
 
-# We'll store a boolean in session state to track if user pressed Enter
+# Track whether user has pressed Enter
 if "entered" not in st.session_state:
     st.session_state["entered"] = False
 
 def show_landing_page():
     """
-    Displays a white-background landing page with:
-    - Large "Vocal Justice Lens" text (~60% screen width)
-    - Embedded MP4 video
+    Displays a dramatic landing page with:
+    - Full-screen MP4 video as background
+    - White overlay to appear mostly white
+    - Large black text for 'Vocal Justice Lens'
     - Explanation text
-    - Prompt for user to press Enter
+    - Press 'Enter' prompt
     """
     st.markdown(
         """
         <style>
-        /* Make entire background white */
+        /* Remove body margin/padding and hide scrollbars */
         body {
-            background-color: #FFFFFF !important;
-            margin: 0;
+            margin: 0; 
             padding: 0;
+            overflow: hidden;
         }
 
-        /* Full-screen container */
+        /* Full-screen video as background */
+        .video-background {
+            position: fixed;
+            top: 0; 
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1; /* behind everything */
+        }
+
+        /* White overlay (slightly transparent) so the page looks white
+           but still shows the animation behind it */
+        .overlay {
+            position: fixed;
+            top: 0; 
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8); 
+            z-index: 0; /* behind text, above video */
+        }
+
+        /* Container for all content in front of overlay */
         .landing-container {
+            position: relative;
+            z-index: 1; /* on top of overlay */
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh; /* full viewport height */
         }
 
-        /* Title styling - super large, bold, ~60% width */
+        /* Giant title, black text */
         .landing-title {
-            font-size: 10vw; /* scale with viewport width for drama */
+            font-size: 10vw;  /* scales with viewport width */
             font-weight: bold;
-            color: #000000; /* black text */
+            color: #000000;   /* black text */
             text-align: center;
-            max-width: 60%;
+            max-width: 90%;
             margin: 0 auto;
         }
 
-        /* Video container: center the video */
-        .video-container {
-            margin: 30px 0;
-        }
-
-        /* Explanation text styling */
+        /* Explanation text below title */
         .explanation {
             font-size: 1.2rem;
-            color: #333333;
+            color: #000000; 
             max-width: 60%;
             text-align: center;
             margin: 20px auto;
         }
 
-        /* Enter prompt styling */
+        /* Prompt for user to press Enter */
         .enter-prompt {
             margin-top: 20px;
             font-size: 1rem;
-            color: #FFA500;
+            color: #FF5733; /* bright orange for emphasis */
             font-weight: bold;
         }
         </style>
@@ -67,20 +88,22 @@ def show_landing_page():
         unsafe_allow_html=True
     )
 
+    # Embed the video as a background and a white overlay on top
     st.markdown(
         """
+        <video class="video-background" autoplay loop muted playsinline>
+            <source src="Yhttps://github.com/tunderules123/vj_landing_page_test/raw/refs/heads/main/VJ_Lens_Animation.mp4" type="video/mp4">
+            <!-- Fallback if browser doesn't support video -->
+            Your browser does not support the video tag.
+        </video>
+
+        <div class="overlay"></div>
+
         <div class="landing-container">
             <div class="landing-title">Vocal Justice Lens</div>
-            <div class="video-container">
-                <!-- Replace 'YOUR_VIDEO_RAW_URL.mp4' with the actual raw link to your MP4 -->
-                <video width="400" autoplay loop muted playsinline>
-                    <source src="https://github.com/tunderules123/vj_landing_page_test/raw/refs/heads/main/VJ_Lens_Animation.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
             <div class="explanation">
-                VJ Lens helps educators analyze survey data using AI, providing deep insights 
-                into teacher confidence, advocacy, and more.
+                VJ Lens helps educators analyze survey data using AI, 
+                providing deep insights into teacher confidence, advocacy, and more.
             </div>
             <div class="enter-prompt">Press "Enter" to continue...</div>
         </div>
@@ -88,21 +111,21 @@ def show_landing_page():
         unsafe_allow_html=True
     )
 
-    # Listen for "Enter"
+    # Detect user pressing Enter
     user_input = st.text_input("", key="landing_input")
     if user_input == "":
+        # If user hits Enter with empty input, we interpret that as continuing
         st.session_state["entered"] = True
         st.experimental_rerun()
 
 def after_enter():
     """
-    This is just a placeholder for what happens after user presses Enter.
-    Currently it shows a simple message.
+    Placeholder after user presses Enter.
     """
     st.write("You pressed Enter! This is just a placeholder.")
     st.write("Integrate this logic into your main app or redirect as needed.")
 
-# Decide what to show
+# Main logic
 if not st.session_state["entered"]:
     show_landing_page()
 else:
