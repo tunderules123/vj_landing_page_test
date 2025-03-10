@@ -1,27 +1,16 @@
 import streamlit as st
-import time
 
-###############################################
-# 0. PAGE CONFIG
-###############################################
-st.set_page_config(page_title="Vocal Justice Lens", layout="wide")
-
-###############################################
-# 1. SESSION STATE FOR LANDING PAGE
-###############################################
+# We'll store a boolean in session state to track if user pressed Enter
 if "entered" not in st.session_state:
     st.session_state["entered"] = False
 
-###############################################
-# 2. LANDING PAGE
-###############################################
 def show_landing_page():
     """
     Displays a white-background landing page with:
-    - Large "Vocal Justice Lens" title (60% width)
-    - Embedded MP4 animation
+    - Large "Vocal Justice Lens" text (~60% screen width)
+    - Embedded MP4 video
     - Explanation text
-    - Prompt to press Enter
+    - Prompt for user to press Enter
     """
     st.markdown(
         """
@@ -44,7 +33,7 @@ def show_landing_page():
 
         /* Title styling - super large, bold, ~60% width */
         .landing-title {
-            font-size: 10vw; /* scale with viewport width for dramatic effect */
+            font-size: 10vw; /* scale with viewport width for drama */
             font-weight: bold;
             color: #000000; /* black text */
             text-align: center;
@@ -78,12 +67,43 @@ def show_landing_page():
         unsafe_allow_html=True
     )
 
-    # Build the landing page layout
     st.markdown(
         """
         <div class="landing-container">
             <div class="landing-title">Vocal Justice Lens</div>
             <div class="video-container">
-                <!-- Replace 'YOUR_VIDEO_URL.mp4' with the actual link to your MP4 animation -->
+                <!-- Replace 'YOUR_VIDEO_RAW_URL.mp4' with the actual raw link to your MP4 -->
                 <video width="400" autoplay loop muted playsinline>
-                    <source src="YOU
+                    <source src="https://github.com/tunderules123/vj_landing_page_test/raw/refs/heads/main/VJ_Lens_Animation.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="explanation">
+                VJ Lens helps educators analyze survey data using AI, providing deep insights 
+                into teacher confidence, advocacy, and more.
+            </div>
+            <div class="enter-prompt">Press "Enter" to continue...</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Listen for "Enter"
+    user_input = st.text_input("", key="landing_input")
+    if user_input == "":
+        st.session_state["entered"] = True
+        st.experimental_rerun()
+
+def after_enter():
+    """
+    This is just a placeholder for what happens after user presses Enter.
+    Currently it shows a simple message.
+    """
+    st.write("You pressed Enter! This is just a placeholder.")
+    st.write("Integrate this logic into your main app or redirect as needed.")
+
+# Decide what to show
+if not st.session_state["entered"]:
+    show_landing_page()
+else:
+    after_enter()
