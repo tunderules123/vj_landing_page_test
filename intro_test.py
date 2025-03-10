@@ -6,27 +6,26 @@ if "entered" not in st.session_state:
 
 def show_landing_page():
     """
-    Displays a dramatic landing page with:
+    Displays a landing page with:
     - Full-screen MP4 video as background
-    - White overlay to appear mostly white
-    - Large black text for 'Vocal Justice Lens'
-    - Explanation text
+    - A semi-transparent white overlay
+    - Large single-line text "Vocal Justice Lens"
     - Press 'Enter' prompt
     """
     st.markdown(
         """
         <style>
-        /* Remove body margin/padding and hide scrollbars */
+        /* Remove margins/padding and hide scrollbars */
         body {
-            margin: 0; 
+            margin: 0;
             padding: 0;
             overflow: hidden;
         }
 
-        /* Full-screen video as background */
+        /* Full-screen background video */
         .video-background {
             position: fixed;
-            top: 0; 
+            top: 0;
             left: 0;
             width: 100%;
             height: 100%;
@@ -34,36 +33,37 @@ def show_landing_page():
             z-index: -1; /* behind everything */
         }
 
-        /* White overlay (slightly transparent) so the page looks white
-           but still shows the animation behind it */
+        /* White overlay, semi-transparent, so video is visible */
         .overlay {
             position: fixed;
             top: 0; 
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(255, 255, 255, 0.8); 
+            background-color: rgba(255, 255, 255, 0.5); 
+            /* Lower alpha => more video visibility 
+               If you want more white, increase to 0.7 or 0.8 */
             z-index: 0; /* behind text, above video */
         }
 
-        /* Container for all content in front of overlay */
+        /* Container for text/elements above overlay */
         .landing-container {
             position: relative;
-            z-index: 1; /* on top of overlay */
+            z-index: 1; /* above overlay */
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            text-align: center;
         }
 
-        /* Giant title, black text */
+        /* Title: single line, large text, no wrap */
         .landing-title {
-            font-size: 10vw;  /* scales with viewport width */
+            font-size: 8vw;  /* big text, but a bit smaller than 10vw to avoid line breaks */
             font-weight: bold;
-            color: #000000;   /* black text */
-            text-align: center;
-            max-width: 90%;
+            color: #000000;  /* black text */
+            white-space: nowrap; /* force single line */
             margin: 0 auto;
         }
 
@@ -72,7 +72,6 @@ def show_landing_page():
             font-size: 1.2rem;
             color: #000000; 
             max-width: 60%;
-            text-align: center;
             margin: 20px auto;
         }
 
@@ -88,12 +87,13 @@ def show_landing_page():
         unsafe_allow_html=True
     )
 
-    # Embed the video as a background and a white overlay on top
+    # Embed the video as a background + semi-transparent overlay
     st.markdown(
         """
         <video class="video-background" autoplay loop muted playsinline>
-            <source src="Yhttps://github.com/tunderules123/vj_landing_page_test/raw/refs/heads/main/VJ_Lens_Animation.mp4" type="video/mp4">
-            <!-- Fallback if browser doesn't support video -->
+            <!-- Replace with your correct raw MP4 URL -->
+            <source src="https://github.com/tunderules123/vj_landing_page_test/raw/refs/heads/main/VJ_Lens_Animation.mp4" type="video/mp4">
+            <!-- fallback text -->
             Your browser does not support the video tag.
         </video>
 
@@ -111,21 +111,16 @@ def show_landing_page():
         unsafe_allow_html=True
     )
 
-    # Detect user pressing Enter
+    # Listen for Enter
     user_input = st.text_input("", key="landing_input")
     if user_input == "":
-        # If user hits Enter with empty input, we interpret that as continuing
         st.session_state["entered"] = True
         st.experimental_rerun()
 
 def after_enter():
-    """
-    Placeholder after user presses Enter.
-    """
-    st.write("You pressed Enter! This is just a placeholder.")
-    st.write("Integrate this logic into your main app or redirect as needed.")
+    """ Placeholder after user presses Enter. """
+    st.write("You pressed Enter! This is just a placeholder for now.")
 
-# Main logic
 if not st.session_state["entered"]:
     show_landing_page()
 else:
